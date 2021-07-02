@@ -3,6 +3,7 @@ import { getMediaArray, writeMedia } from '../../lib/fileSystemTools.js'
 import { v2 as cloudinary } from 'cloudinary'
 import { CloudinaryStorage } from 'multer-storage-cloudinary'
 import multer from 'multer'
+import { generatePDFReadableStream } from '../../lib/pdf/index.js'
 
 const mediaPosterStorage = new CloudinaryStorage({
     cloudinary,
@@ -140,6 +141,26 @@ mediaRouter.post("/:imdbID/posterUpload", uploadOnCloudinary.single('poster'), a
         } else {
             next(createError(404, `Media with imdbID ${req.params.imdbID} not found!`))
         }
+    } catch (error) {
+        next(error)
+    }
+})
+
+// [EXTRA] Export single media as PDF with reviews =====================================
+
+mediaRouter.get("/:imdbID/PDFDownload", async ( req, res, next) => {
+    try {
+        const mediaArr = await getMediaArray()
+        const media = mediaArr.find(media => media.imdbID === req.params.imdbID)
+
+        res.setHeader("Content-Disposition", `attachment; filename=${req.body.Title}.pdf`)
+
+        const source = await generatePDFReadableStream(media)
+        const destination = res
+
+        pipeline(source, destination, err => {
+            if(err) next(err)
+        })
     } catch (error) {
         next(error)
     }
