@@ -1,5 +1,17 @@
 import express from 'express'
 import { getMediaArray, writeMedia } from '../../lib/fileSystemTools.js'
+import { v2 as cloudinary } from 'cloudinary'
+import { CloudinaryStorage } from 'multer-storage-cloudinary'
+import multer from 'multer'
+
+const mediaPosterStorage = new CloudinaryStorage({
+    cloudinary,
+    params: {
+        folder: "MoviePosters",
+    }
+})
+
+const uploadOnCloudinary = multer({ storage: mediaPosterStorage})
 
 const mediaRouter = express.Router()
 
@@ -106,8 +118,31 @@ mediaRouter.delete("/:imdbID", async ( req, res, next) => {
 
 // POST Poster to single media ====================================================
 
-mediaRouter.post("/:imdbID", async ( req, res, next) => {})
+mediaRouter.post("/:imdbID/posterUpload", uploadOnCloudinary.single('poster'), async ( req, res, next) => {
+    try {
+        const mediaArr = await getMediaArray()
+        const media = mediaArr.find(media => media.imdbID === req.params.imdbID)
 
+        if (media) {
+            const remainingMedia = mediaArr.filter(media => media.imdbID !== req.params.imdbID)
 
+            const modifiedMedia = { 
+                imdbID: req.params.imdbID, 
+                ...media, 
+                Poster : req.file.path
+            }
+
+            remainingMedia.push(modifiedMedia)
+
+            await writeMedia(remainingMedia)
+
+            res.send(modifiedMedia)
+        } else {
+            next(createError(404, `Media with imdbID ${req.params.imdbID} not found!`))
+        }
+    } catch (error) {
+        next(error)
+    }
+})
 
 export default mediaRouter
