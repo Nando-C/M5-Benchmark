@@ -61,7 +61,7 @@ mediaRouter.get("/:imdbID", async ( req, res, next) => {
 
 // UPDATE Media ===================================================================
 
-mediaRouter.put("/:id", async ( req, res, next) => {
+mediaRouter.put("/:imdbID", async ( req, res, next) => {
     try {
         const mediaArr = await getMediaArray()
         const media = mediaArr.find(media => media.imdbID === req.params.imdbID)
@@ -69,7 +69,7 @@ mediaRouter.put("/:id", async ( req, res, next) => {
         if (media) {
             const remainingMedia = mediaArr.filter(media => media.imdbID !== req.params.imdbID)
 
-            const modifiedMedia = { ...media, ...req.body}
+            const modifiedMedia = { imdbID: req.params.imdbID, ...media, ...req.body}
 
             remainingMedia.push(modifiedMedia)
             await writeMedia(remainingMedia)
@@ -85,7 +85,7 @@ mediaRouter.put("/:id", async ( req, res, next) => {
 
 // DELETE Media ===================================================================
 
-mediaRouter.delete("/:id", async ( req, res, next) => {
+mediaRouter.delete("/:imdbID", async ( req, res, next) => {
     try {
         const mediaArr = await getMediaArray()
         const media = mediaArr.find(media => media.imdbID === req.params.imdbID)
@@ -106,7 +106,7 @@ mediaRouter.delete("/:id", async ( req, res, next) => {
 
 // POST Poster to single media ====================================================
 
-mediaRouter.post("/:id", async ( req, res, next) => {})
+mediaRouter.post("/:imdbID", async ( req, res, next) => {})
 
 
 
