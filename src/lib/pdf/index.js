@@ -22,28 +22,38 @@ export const generatePDFReadableStream = async (media) => {
         const [id, extension] = fileName.split(".")
         const base64 = response.data.toString("base64")
         const base64Img = `data:image/${extension};base64,${base64}`
-        posterImg = { image: base64Img, width: 500, margin: [0, 0, 0, 30] }
+        posterImg = { image: base64Img, width: 250, margin: [0, 0, 0, 30] }
     }
     const printer = new PdfPrinter(fonts)
 
     const docDefinition = {
         content: [
-            
-            posterImg,
-            
             {
                 text: `${media.Title}`,
-                style: 'header'
+                style: 'header',
+                margin: [0, 0, 0, 10]
             },
             {
-                text: `by ${media.Year}`,
-                style: 'subheader'
+                style: 'tableExample',
+                table: {
+                    widths: ['*', 10, '*'],
+                    body: [
+                        [ {text: 'Poster', style: 'tableHeaders'}, '', {text: 'Information', style: 'tableHeaders'}],
+                        [
+                            posterImg ,
+                            '',
+                            {
+                                text: [
+                                    {text: `Title: ${media.Title}\n\n`},
+                                    {text: `Year: ${media.Year}\n\n`},
+                                    {text: `Category: ${media.Type}\n\n`}
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                layout: 'noBorders'
             },
-            { 
-               text: striptags(`${media.Type}`, [], '\n'),
-               alignment: 'center' 
-            }
-            
         ],
         styles: {
             header: {
@@ -53,6 +63,15 @@ export const generatePDFReadableStream = async (media) => {
             subheader: {
                 fontSize: 12,
 			    bold: true,
+                margin: [5, 5, 5, 10]
+            },
+            tableExample: {
+                margin: [5, 5, 5, 10]
+            },
+            tableHeaders: {
+                bold: true,
+                alignment: 'center',
+                margin: [0, 10, 0, 10]
             }
         }
     }
