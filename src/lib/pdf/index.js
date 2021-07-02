@@ -46,7 +46,9 @@ export const generatePDFReadableStream = async (media) => {
                                 text: [
                                     {text: `Title: ${media.Title}\n\n`},
                                     {text: `Year: ${media.Year}\n\n`},
-                                    {text: `Category: ${media.Type}\n\n`}
+                                    {text: `Category: ${media.Type}\n\n`},
+                                    {text: `imdbID: ${media.imdbID}\n\n`},
+                                    {text: `Poster Link: \n${media.Poster}\n\n`}
                                 ]
                             }
                         ]
