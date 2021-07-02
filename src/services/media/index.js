@@ -4,6 +4,7 @@ import { v2 as cloudinary } from 'cloudinary'
 import { CloudinaryStorage } from 'multer-storage-cloudinary'
 import multer from 'multer'
 import { generatePDFReadableStream } from '../../lib/pdf/index.js'
+import { pipeline } from 'stream'
 
 const mediaPosterStorage = new CloudinaryStorage({
     cloudinary,
