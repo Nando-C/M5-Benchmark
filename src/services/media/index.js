@@ -2,9 +2,18 @@ import express from 'express'
 
 const mediaRouter = express.Router()
 
+// =================  Media Object Model ==========================================
+// {
+//     "Title": "The Lord of the Rings: The Fellowship of the Ring",
+//     "Year": "2001",
+//     "imdbID": "tt0120737",  //UNIQUE
+//     "Type": "movie",
+//     "Poster": "https://m.media-amazon.com/images/M/MV5BMTM5MzcwOTg4MF5BMl5BanBnXkFtZTgwOTQwMzQxMDE@._V1_SX300.jpg"
+// }
+// ================================================================================
+
 // POST Media =====================================================================
 mediaRouter.post("/", async ( req, res, next) => {})
-
 // GET Medias (list) (with reviews) ===============================================
 mediaRouter.get("/", async ( req, res, next) => {})
 
