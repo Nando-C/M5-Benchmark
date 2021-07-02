@@ -36,7 +36,7 @@ mediaRouter.post("/", async( req, res, next) => {
 
         await writeMedia(mediaArr)
 
-        res.status(201).send({newMedia})
+        res.status(201).send(newMedia)
     } catch (error) {
         next(error)
         
