@@ -1,5 +1,5 @@
 import express from 'express'
-import { getMediaArray, writeMedia } from '../../lib/fileSystemTools.js'
+import { getMediaArray, writeMedia, getReviewsArray } from '../../lib/fileSystemTools.js'
 import { v2 as cloudinary } from 'cloudinary'
 import { CloudinaryStorage } from 'multer-storage-cloudinary'
 import multer from 'multer'
@@ -154,9 +154,12 @@ mediaRouter.get("/:imdbID/PDFDownload", async ( req, res, next) => {
         const mediaArr = await getMediaArray()
         const media = mediaArr.find(media => media.imdbID === req.params.imdbID)
 
+        const reviewsArr = await getReviewsArray()
+        const reviews = reviewsArr.filter(reviews => reviews.elementId === req.params.imdbID)
+
         res.setHeader("Content-Disposition", `attachment; filename=${req.body.Title}.pdf`)
 
-        const source = await generatePDFReadableStream(media)
+        const source = await generatePDFReadableStream(media, reviews)
         const destination = res
 
         pipeline(source, destination, err => {
